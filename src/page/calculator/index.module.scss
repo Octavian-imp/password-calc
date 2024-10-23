@@ -1,3 +1,11 @@
+.calc_history {
+  font-family: var(--font-work-sans);
+  @apply font-light text-[40px] leading-[auto] text-zinc-500 self-end min-h-12;
+}
+.calc_result {
+  font-family: var(--font-work-sans);
+  @apply font-light text-8xl self-end min-h-24;
+}
 .calc_row {
   @apply flex gap-x-4;
   &:not(:first-of-type) {

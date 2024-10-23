@@ -1,17 +1,12 @@
 "use client"
-import { workSans } from "@/app/layout"
 import Button from "@/components/ui/button"
 import Icon from "@/components/ui/icon"
+import calculator, {
+  rgxExpressionCalculator,
+  rgxOperationCalculator,
+} from "@/utils/calculator"
 import { useState } from "react"
 import styles from "./index.module.scss"
-
-const operations = {
-  "/": (a: number, b: number) => a / b,
-  "*": (a: number, b: number) => a * b,
-  "+": (a: number, b: number) => a + b,
-  "-": (a: number, b: number) => a - b,
-}
-const rgx = /(\d+|[\/\%\*\+\-])/g
 
 const CalculatorPage = () => {
   const [historyVal, setHistoryVal] = useState("")
@@ -34,97 +29,49 @@ const CalculatorPage = () => {
     if (activeValue === "0") {
       return
     }
-    if (activeValue[0] === "-") {
+    if (
+      activeValue.match(rgxExpressionCalculator)!.filter(Boolean).map(Number)
+        .length > 1
+    ) {
+      // меняем знак числа если перед числом стоит операция
+      setActiveValue((prev) => {
+        return prev.replace(/\d+$/, "-" + prev.match(/\d+$/)?.[0])
+      })
+    } else if (activeValue[0] === "-") {
       setActiveValue((prev) => prev.slice(1))
     } else {
       setActiveValue((prev) => "-" + prev)
     }
   }
 
-  function handleReminder() {
-    let counter = 1
-
-    return () => {
-      const expression = activeValue.split(rgx)
-      console.log(expression)
-      if (counter === 2) {
-        setHistoryVal(activeValue)
-        setActiveValue(expression + "%")
-        counter = 1
-      } else {
-        setActiveValue((prev) => prev + "%")
-        counter++
+  function handleAddOperation(operation: "+" | "-" | "x" | "/" | "%") {
+    if (rgxOperationCalculator.test(activeValue)) {
+      const args = activeValue
+        .match(rgxExpressionCalculator)!
+        .filter(Boolean)
+        .map(Number)
+      const operations = activeValue.match(rgxOperationCalculator)
+      if (operations) {
+        if (operations.length === 1 && args[0] >= 0 && args[1] >= 0) {
+          // расчет если первое число положительное и второе отрицательное и нажата кнопка операции
+          return handleResult()
+        }
+        if (operations.length === 2 && (args[0] < 0 || args[1] < 0)) {
+          // расчет если первое число отрицательное или второе положительное и нажата кнопка операции
+          return handleResult()
+        }
+        if (operations.length === 3 && args[0] < 0 && args[1] < 0) {
+          // расчет если первое число отрицательное и второе отрицательное и нажата кнопка операции
+          return handleResult()
+        }
       }
     }
-  }
-
-  function handleDivide() {
-    let counter = 1
-
-    return () => {
-      if (counter === 2) {
-        const calculated = eval(activeValue)
-        setHistoryVal(activeValue)
-        setActiveValue(calculated + "/")
-        counter = 1
-      } else {
-        setActiveValue((prev) => prev + "/")
-        counter++
-      }
-    }
-  }
-  function handleMultiply() {
-    let counter = 1
-
-    return () => {
-      console.log(activeValue)
-
-      if (counter === 2) {
-        const calculated = eval(activeValue.replace("x", "*"))
-        setHistoryVal(activeValue)
-        setActiveValue(calculated + "x")
-        counter = 1
-      } else {
-        setActiveValue((prev) => prev + "x")
-        counter++
-      }
-    }
-  }
-  function handleDecrease() {
-    let counter = 1
-
-    return () => {
-      if (counter === 2) {
-        const calculated = eval(activeValue)
-        setHistoryVal(activeValue)
-        setActiveValue(calculated + "-")
-        counter = 1
-      } else {
-        setActiveValue((prev) => prev + "-")
-        counter++
-      }
-    }
+    setActiveValue((prev) => prev + operation)
   }
 
   function handleAddDot() {
     if (!activeValue.includes(".")) {
       setActiveValue((prev) => prev + ".")
-    }
-  }
-
-  function handleSumm() {
-    let counter = 1
-
-    return () => {
-      if (counter === 2) {
-        const calculated = eval(activeValue)
-        setHistoryVal(activeValue)
-        setActiveValue(calculated + "+")
-        counter = 1
-      } else {
-        setActiveValue((prev) => prev + "+")
-        counter++
-      }
     }
   }
 
@@ -137,24 +84,16 @@ const CalculatorPage = () => {
   }
 
   function handleResult() {
-    const calculated = eval(activeValue)
+    const calculated = calculator(activeValue)
 
-    setHistoryVal("")
-    setActiveValue(calculated)
+    setHistoryVal(activeValue)
+    setActiveValue(calculated?.toString() ?? "")
   }
 
   return (
     <div className="bg-gray-100 rounded-md h-[700px] px-5 py-16 max-w-[440px] self-center w-full flex flex-col gap-y-4">
-      <span
-        className={`${workSans.className} font-light text-[40px] leading-[auto] text-zinc-500 self-end min-h-12`}
-      >
-        {historyVal}
-      </span>
-      <span
-        className={`${workSans.className} font-light text-8xl self-end min-h-24`}
-      >
-        {activeValue}
-      </span>
+      <span className={styles.calc_history}>{historyVal}</span>
+      <span className={styles.calc_result}>{activeValue}</span>
       <div className={styles.calc_row}>
         <Button className={styles.calc_btn} onClick={handleClear}>
           C
@@ -165,7 +104,10 @@ const CalculatorPage = () => {
         <Button className={styles.calc_btn} onClick={handleChangeSignedValue}>
           +/-
         </Button>
-        <Button className={styles.calc_btn} onClick={() => handleReminder()()}>
+        <Button
+          className={styles.calc_btn}
+          onClick={() => handleAddOperation("%")}
+        >
           %
         </Button>
       </div>
@@ -188,7 +130,10 @@ const CalculatorPage = () => {
         >
           9
         </Button>
-        <Button className={styles.calc_btn} onClick={() => handleDivide()()}>
+        <Button
+          className={styles.calc_btn}
+          onClick={() => handleAddOperation("/")}
+        >
           /
         </Button>
       </div>
@@ -211,7 +156,10 @@ const CalculatorPage = () => {
         >
           6
         </Button>
-        <Button className={styles.calc_btn} onClick={() => handleMultiply()()}>
+        <Button
+          className={styles.calc_btn}
+          onClick={() => handleAddOperation("x")}
+        >
           x
         </Button>
       </div>
@@ -234,7 +182,10 @@ const CalculatorPage = () => {
         >
           3
         </Button>
-        <Button className={styles.calc_btn} onClick={() => handleDecrease()()}>
+        <Button
+          className={styles.calc_btn}
+          onClick={() => handleAddOperation("-")}
+        >
           -
         </Button>
       </div>
@@ -256,7 +207,10 @@ const CalculatorPage = () => {
         >
           0
         </Button>
-        <Button className={styles.calc_btn} onClick={() => handleSumm()()}>
+        <Button
+          className={styles.calc_btn}
+          onClick={() => handleAddOperation("+")}
+        >
           +
         </Button>
         <Button className={styles.calc_btn} onClick={() => handleResult()}>
