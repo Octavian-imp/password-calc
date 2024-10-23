@@ -1,0 +1,16 @@
+.login-form {
+  @apply flex flex-col gap-y-9 bg-white border-[#dee2e6] border-[1px] py-9 px-10 rounded-lg;
+  width: max(440px, 39vw);
+  filter: drop-shadow(0 0 2px rgba(#000, 0.12)),
+    drop-shadow(0 20px 20px rgba(#000, 0.08));
+
+  &__main {
+    @apply flex flex-col gap-y-4;
+  }
+  &__title {
+    @apply text-[#54595E] font-semibold text-xl leading-[auto];
+  }
+  &__footer {
+    @apply flex gap-4 items-center justify-end flex-wrap;
+  }
+}

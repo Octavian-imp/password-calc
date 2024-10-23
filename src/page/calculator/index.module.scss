@@ -1,0 +1,20 @@
+.calc_row {
+  @apply flex gap-x-4;
+  &:not(:first-of-type) {
+    .calc_btn {
+      background-color: #fff !important;
+      color: #000 !important;
+    }
+  }
+  .calc_btn {
+    font-family: var(--font-work-sans);
+    @apply font-normal text-[32px] leading-10 p-3 rounded-3xl flex-1 !bg-[#d2d3da] !text-black flex items-center justify-center;
+    &:hover {
+      @apply brightness-90 duration-100;
+    }
+    &:last-child {
+      background-color: theme("colors.primary") !important;
+      color: #fff !important;
+    }
+  }
+}

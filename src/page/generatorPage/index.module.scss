@@ -1,0 +1,23 @@
+@use "../../utils/styles/mixins/pxToRem.scss" as *;
+
+.container {
+  @include pxToRem(max-height, 575);
+  @apply flex flex-col gap-y-2;
+  .title {
+    @apply font-medium;
+    @include pxToRem(font-size, 40);
+    @include pxToRem(line-height, 48);
+  }
+  .content {
+    @apply flex gap-x-4;
+    .label {
+      @apply text-base;
+    }
+    .password_config {
+      @apply flex flex-col flex-1 gap-3;
+    }
+    .button {
+      @apply font-semibold w-fit;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+@use "../../../utils/styles/mixins/pxToRem.scss" as *;
+
+.wrapper {
+  @apply flex flex-col gap-y-1;
+  .label {
+    @apply font-medium text-xs leading-6;
+  }
+  .input {
+    @apply border-[1px] border-[#d1d1d1] rounded-lg text-sm leading-[auto] font-medium placeholder:text-[#d1d1d1];
+    @include pxToRem(padding-right, 16);
+    @include pxToRem(padding-left, 16);
+    @include pxToRem(padding-top, 13.5);
+    @include pxToRem(padding-bottom, 13.5);
+  }
+}

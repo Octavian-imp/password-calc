@@ -1,0 +1,8 @@
+.container {
+  @apply flex flex-col flex-1;
+  list-style-type: none;
+  .password_item {
+    @apply py-1 px-6 flex items-center justify-between;
+    border: 1px solid rgba(#000, 0.13);
+  }
+}

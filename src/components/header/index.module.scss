@@ -1,0 +1,22 @@
+@use "../../utils/styles/mixins/pxToRem.scss" as *;
+
+.wrapper {
+  @apply flex justify-between bg-white py-4;
+  .left-side {
+    @apply flex items-center gap-x-8;
+    &__link {
+      @apply font-semibold text-sm leading-[22px];
+    }
+  }
+  .right-side {
+    @apply flex items-center gap-x-2;
+    &__title {
+      @apply font-semibold text-xs leading-[13.5px];
+    }
+    &__avatar {
+      @apply bg-primary rounded-circle flex items-center justify-center text-2xl leading-[13.5px] text-white font-semibold;
+      @include pxToRem(width, 40);
+      @include pxToRem(height, 40);
+    }
+  }
+}

@@ -1,0 +1,32 @@
+@use "../../../utils/styles/mixins/pxToRem.scss" as *;
+
+.input:checked + .wrapper > .icon:before {
+  @apply border-primary bg-primary;
+}
+.input:checked + .wrapper > .icon:after {
+  content: "";
+  display: block;
+  @include pxToRem(height, 5);
+  @include pxToRem(width, 8);
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+}
+
+.wrapper {
+  @apply flex gap-x-2 items-center w-fit select-none cursor-pointer;
+  .icon {
+    @apply relative;
+    &:before {
+      content: "";
+      display: block;
+      @include pxToRem(height, 13);
+      @include pxToRem(width, 13);
+      border: 1px solid #767676;
+      @apply rounded-sm duration-150;
+    }
+  }
+}
